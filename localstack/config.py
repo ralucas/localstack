@@ -8,6 +8,9 @@ from os.path import expanduser
 from six import iteritems
 from localstack.constants import DEFAULT_SERVICE_PORTS, LOCALHOST, PATH_USER_REQUEST, DEFAULT_PORT_WEB_UI
 
+# Take Dynamo out of being proxied --- This was done due to errors
+DYNAMODB_NO_PROXY = True
+
 # randomly inject faults to Kinesis
 KINESIS_ERROR_PROBABILITY = float(os.environ.get('KINESIS_ERROR_PROBABILITY', '').strip() or 0.0)
 

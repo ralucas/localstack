@@ -17,7 +17,7 @@ from localstack.constants import (ENV_DEV, DEFAULT_REGION, LOCALSTACK_VENV_FOLDE
 from localstack.config import (USE_SSL, PORT_ROUTE53, PORT_S3,
     PORT_FIREHOSE, PORT_LAMBDA, PORT_SNS, PORT_REDSHIFT, PORT_CLOUDWATCH,
     PORT_DYNAMODBSTREAMS, PORT_SES, PORT_ES, PORT_CLOUDFORMATION, PORT_APIGATEWAY,
-    PORT_SSM)
+    PORT_SSM, DYNAMODB_NO_PROXY)
 from localstack.utils import common, persistence
 from localstack.utils.common import (run, TMP_THREADS, in_ci, run_cmd_safe,
     TIMESTAMP_FORMAT, FuncThread, ShellCommandThread, mkdir)
@@ -336,7 +336,9 @@ def check_infra(retries=8, expect_shutdown=False, apis=None, additional_checks=[
 
         # loop through plugins and check service status
         for name, plugin in SERVICE_PLUGINS.items():
-            if name in apis:
+            if DYNAMODB_NO_PROXY and name == 'dynamodb':
+                LOGGER.debug('DynamoDB running outside proxy')
+            elif name in apis:
                 try:
                     plugin.check(expect_shutdown=expect_shutdown, print_error=print_error)
                 except Exception as e:
